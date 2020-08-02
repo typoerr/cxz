@@ -1,0 +1,9 @@
+{
+  "extends": [
+    "@typoerr/eslint-config",
+    "@typoerr/eslint-config/+typescript"
+  ],
+  "rules": {
+    "prefer-spread": "off"
+  }
+}
