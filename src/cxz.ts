@@ -24,7 +24,9 @@ const _prefix = 'cxz'
 let insert = (rule: string): unknown => _rules.push(rule)
 
 if (typeof document !== 'undefined') {
-  const sheet = document.head.appendChild(document.createElement('style')).sheet!
+  const style = document.createElement('style')
+  style.id = '_' + _prefix
+  const sheet = document.head.appendChild(style).sheet!
   insert = (rule) => {
     sheet.insertRule(rule, sheet.cssRules.length)
     _rules.push(rule)
