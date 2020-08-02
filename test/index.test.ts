@@ -6,4 +6,5 @@ test('exports', (t) => {
   t.true(typeof cxz.keyframes === 'function')
   t.true(typeof cxz.extract === 'function')
   t.true(typeof cxz.reset === 'function')
+  t.true(typeof cxz.sel === 'function')
 })

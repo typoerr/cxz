@@ -1,5 +1,5 @@
 import test from 'ava'
-import { css, keyframes, extract, reset, _rules, _cache } from '../src/cxz'
+import { css, keyframes, extract, reset, sel, _rules, _cache } from '../src/cxz'
 
 test.serial.beforeEach(reset)
 
@@ -68,4 +68,12 @@ test.serial('reset', (t) => {
 
   t.deepEqual(_cache, {})
   t.deepEqual(_rules, [])
+})
+
+test('sel', (t) => {
+  const classNames = css({
+    color: 'black',
+    fontSize: 'large',
+  })
+  t.is(sel(classNames), '.cxz-xsykfc')
 })

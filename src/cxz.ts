@@ -33,6 +33,8 @@ if (typeof document !== 'undefined') {
   }
 }
 
+export const sel = (s: string) => '.' + s.split(' ')[0]
+
 export const css: CSSFunction = function patch(tree: CSSTree, pseudo: string = '', media?: string) {
   const cNames: string[] = []
   for (const prop in tree) {
