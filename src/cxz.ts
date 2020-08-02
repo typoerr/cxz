@@ -19,7 +19,7 @@ export let _cache: Record<string, string> = {}
 
 export const _rules: string[] = []
 
-const _prefix = 'cxz-'
+const _prefix = 'cxz'
 
 let insert = (rule: string): unknown => _rules.push(rule)
 
@@ -42,7 +42,7 @@ export const css: CSSFunction = function patch(tree: CSSTree, pseudo: string = '
       if (_cache[ck]) {
         cNames.push(_cache[ck])
       } else {
-        const cn = (_cache[ck] = _prefix + hash(ck))
+        const cn = (_cache[ck] = _prefix + '-' + hash(ck))
         cNames.push(cn)
         const sel = pseudo ? pseudo.replace(/&/g, '.' + cn) : '.' + cn
         const rule = wrap(sel, pair(prop, val))
@@ -68,7 +68,7 @@ export const keyframes = (tree: KeyFrameTree) => {
   if (_cache[rule]) {
     return _cache[rule]
   } else {
-    const name = (_cache[rule] = _prefix + hash(rule))
+    const name = (_cache[rule] = _prefix + '-' + hash(rule))
     insert(wrap('@keyframes ' + name, rule))
     return name
   }
