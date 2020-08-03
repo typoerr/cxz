@@ -1,10 +1,41 @@
 import test from 'ava'
-import * as cxz from '../src/index'
+import { css, keyframes, reset, extract } from '../src/index'
 
-test('exports', (t) => {
-  t.true(typeof cxz.css === 'function')
-  t.true(typeof cxz.keyframes === 'function')
-  t.true(typeof cxz.extract === 'function')
-  t.true(typeof cxz.reset === 'function')
-  t.true(typeof cxz.sel === 'function')
+test.serial.beforeEach(reset)
+
+test.serial('css', (t) => {
+  const name = css({
+    color: 'red',
+    '&:hover': {
+      color: 'yellow',
+    },
+    backgroundColor: 'blue',
+    '@media(min-width:500px)': {
+      color: 'red',
+      '&:hover': {
+        color: 'yellow',
+      },
+      backgroundColor: 'blue',
+    },
+  })
+
+  const a = `.${name}{color:red;}`
+  const b = `.${name}:hover{color:yellow;}`
+  const c = `.${name}{background-color:blue;}`
+  const d = `@media(min-width:500px){${a + b + c}}`
+
+  t.is(extract(), `@media{${a + b + c + d}}`)
+})
+
+test.serial('keyframes', (t) => {
+  const name = keyframes({
+    from: {
+      opacity: 0,
+    },
+    to: {
+      opacity: 1,
+    },
+  })
+
+  t.is(extract(), `@keyframes ${name}{from{opacity:0;}to{opacity:1;}}`)
 })
