@@ -1,5 +1,5 @@
 import { h, render } from 'preact'
-import { css, sel, keyframes } from '../src/index'
+import { css, keyframes } from '../src/index'
 
 const effect = keyframes({
   from: { opacity: 0 },
@@ -9,6 +9,7 @@ const effect = keyframes({
 const text = css({
   textAlign: 'center',
   color: 'gray',
+  borderBottom: 'solid 1px pink',
 })
 
 const container = css({
@@ -16,8 +17,9 @@ const container = css({
   width: '300px',
   height: '100px',
   background: 'pink',
-  [`&:hover > ${sel(text)}`]: {
+  [`&:hover > .${text}`]: {
     color: 'green',
+    borderBottom: 'solid 1px #aaa',
   },
   '@media(min-width:500px)': {
     background: 'yellow',
