@@ -14,30 +14,30 @@ const wrap = (k: string, v: string) => k + '{' + v + '}'
 const pair = (k: string, v: string) => k + ':' + v + ';'
 
 const compile = (tree: CSSTree, sel = '&') => {
-  let rules = ''
+  let rule = ''
   let block = ''
-  for (const prop in tree) {
-    const val: any = tree[prop as keyof CSSTree]
-    if (val == null) {
+  for (const k in tree) {
+    const v: any = tree[k as keyof CSSTree]
+    if (v == null) {
       continue
-    } else if (typeof val === 'object') {
-      if (block.length) {
-        rules += wrap(sel, block)
+    } else if (typeof v === 'object') {
+      if (block) {
+        rule += wrap(sel, block)
         block = ''
       }
-      if (prop[0] === '@') {
-        rules += wrap(prop, compile(val, sel))
+      if (k[0] === '@') {
+        rule += wrap(k, compile(v, sel))
       } else {
-        rules += compile(val, prop)
+        rule += compile(v, k)
       }
     } else {
-      block += pair(hyph(prop), val)
+      block += pair(hyph(k), v)
     }
   }
-  if (block.length) {
-    rules += wrap(sel, block)
+  if (block) {
+    rule += wrap(sel, block)
   }
-  return rules
+  return rule
 }
 
 export default function cxz(option: CXZOption = {}) {
@@ -53,13 +53,15 @@ export default function cxz(option: CXZOption = {}) {
       style.innerHTML = ' '
       _sheet = style.firstChild as any
     }
+
     const insert = (rule: string) => _sheet.data.indexOf(rule) < 0 && (_sheet.data += rule)
     const reset = () => (cache = {}) && (_sheet.data = ' ')
     const extract = () => _sheet.data
+
     return { insert, reset, extract }
   })()
 
-  const create = (cb: (rule: string, name: string) => string) => (tree: CSSTree) => {
+  const gen = (cb: (rule: string, name: string) => string) => (tree: CSSTree) => {
     const rule = compile(tree)
     if (cache[rule]) {
       return cache[rule]
@@ -69,8 +71,8 @@ export default function cxz(option: CXZOption = {}) {
     return name
   }
 
-  const css = create((rule, name) => rule.replace(/&/gm, '.' + name))
-  const keyframes = create((rule, name) => wrap('@keyframes ' + name, rule))
+  const css = gen((rule, name) => rule.replace(/&/gm, '.' + name))
+  const keyframes = gen((rule, name) => wrap('@keyframes ' + name, rule))
 
   return { sheet, css, keyframes }
 }
