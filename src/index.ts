@@ -42,7 +42,7 @@ const compile = (tree: CSSTree, sel = '&') => {
 
 export default function cxz(option: CXZOption = {}) {
   const prefix = option.prefix || 'cxz'
-  const cache: Record<string, string> = {}
+  let cache: Record<string, string> = {}
 
   const sheet = (() => {
     let _sheet = { data: '' }
@@ -53,8 +53,8 @@ export default function cxz(option: CXZOption = {}) {
       style.innerHTML = ' '
       _sheet = style.firstChild as any
     }
-    const insert = (rule: string) => (_sheet.data += rule)
-    const reset = () => (_sheet.data = '')
+    const insert = (rule: string) => _sheet.data.indexOf(rule) < 0 && (_sheet.data += rule)
+    const reset = () => (cache = {}) && (_sheet.data = ' ')
     const extract = () => _sheet.data
     return { insert, reset, extract }
   })()
