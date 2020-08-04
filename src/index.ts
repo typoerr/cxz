@@ -5,29 +5,15 @@ export interface CSSProps extends CSS.Properties, CSS.PropertiesHyphen {}
 
 export type CSSTree = CSSProps | Record<string, CSSProps> | Record<string, Record<string, CSSProps>>
 
-export interface KeyFrameTree extends Record<string, CSSProps> {}
+export interface CXZOption {
+  prefix?: string
+}
 
 const hyph = (s: string) => s.replace(/[A-Z]/g, '-$&').toLowerCase()
 const wrap = (k: string, v: string) => k + '{' + v + '}'
 const pair = (k: string, v: string) => hyph(k) + ':' + v + ';'
 
-const _prefix = 'cxz'
-const _rules: string[] = []
-let _cache: Record<string, string> = {}
-
-let insert = (rule: string): unknown => _rules.push(rule)
-
-if (typeof document !== 'undefined') {
-  const style = document.createElement('style')
-  style.id = '_' + _prefix
-  const sheet = document.head.appendChild(style).sheet!
-  insert = (rule) => {
-    sheet.insertRule(rule, sheet.cssRules.length)
-    _rules.push(rule)
-  }
-}
-
-function compile(tree: CSSTree, sel = '&') {
+const compile = (tree: CSSTree, sel = '&') => {
   let rules = ''
   let block = ''
   for (const prop in tree) {
@@ -54,31 +40,39 @@ function compile(tree: CSSTree, sel = '&') {
   return rules
 }
 
-export function css(tree: CSSTree) {
-  const rule = compile(tree)
-  if (_cache[rule]) {
-    return _cache[rule]
+export default function cxz(option: CXZOption = {}) {
+  const prefix = option.prefix || 'cxz'
+  const cache: Record<string, string> = {}
+
+  const sheet = (() => {
+    let _sheet = { data: '' }
+    if (typeof document !== 'undefined') {
+      const id = '_' + prefix
+      const style = document.getElementById(id) || document.head.appendChild(document.createElement('style'))
+      style.id = id
+      style.innerHTML = ' '
+      _sheet = style.firstChild as any
+    }
+    const insert = (rule: string) => (_sheet.data += rule)
+    const reset = () => (_sheet.data = '')
+    const extract = () => _sheet.data
+    return { insert, reset, extract }
+  })()
+
+  const updater = (reduce: (rule: string, name: string, tree: CSSTree) => string) => (tree: CSSTree) => {
+    const rule = compile(tree)
+    if (cache[rule]) {
+      return cache[rule]
+    }
+    const name = (cache[rule] = prefix + '-' + hash(rule))
+    sheet.insert(reduce(rule, name, tree))
+    return name
   }
-  const name = (_cache[rule] = _prefix + '_' + hash(rule))
-  insert(wrap('@media', rule.replace(/&/gm, '.' + name)))
-  return name
+
+  const css = updater((rule, name) => wrap('@media', rule.replace(/&/gm, '.' + name)))
+  const keyframes = updater((rule, name) => wrap('@keyframes ' + name, rule))
+
+  return { sheet, css, keyframes }
 }
 
-export function keyframes(tree: KeyFrameTree) {
-  const rule = compile(tree)
-  if (_cache[rule]) {
-    return _cache[rule]
-  }
-  const name = (_cache[rule] = _prefix + '_' + hash(rule))
-  insert(wrap('@keyframes ' + name, rule))
-  return name
-}
-
-export function extract() {
-  return _rules.join('')
-}
-
-export function reset() {
-  _cache = {}
-  while (_rules.length) _rules.pop()
-}
+export const { css, keyframes, sheet } = cxz()

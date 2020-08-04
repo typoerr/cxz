@@ -1,9 +1,9 @@
 import test from 'ava'
-import { css, keyframes, reset, extract } from '../src/index'
+import cxz from '../src/index'
 
-test.serial.beforeEach(reset)
+test('css', (t) => {
+  const { css, sheet } = cxz()
 
-test.serial('css', (t) => {
   const name = css({
     color: 'red',
     '&:hover': {
@@ -24,10 +24,11 @@ test.serial('css', (t) => {
   const c = `.${name}{background-color:blue;}`
   const d = `@media(min-width:500px){${a + b + c}}`
 
-  t.is(extract(), `@media{${a + b + c + d}}`)
+  t.is(sheet.extract(), `@media{${a + b + c + d}}`)
 })
 
-test.serial('keyframes', (t) => {
+test('keyframes', (t) => {
+  const { keyframes, sheet } = cxz()
   const name = keyframes({
     from: {
       opacity: 0,
@@ -37,5 +38,5 @@ test.serial('keyframes', (t) => {
     },
   })
 
-  t.is(extract(), `@keyframes ${name}{from{opacity:0;}to{opacity:1;}}`)
+  t.is(sheet.extract(), `@keyframes ${name}{from{opacity:0;}to{opacity:1;}}`)
 })
