@@ -13,6 +13,7 @@ export default {
       entryFileNames: '[name].js',
       format: 'cjs',
       sourcemap: true,
+      exports: 'named',
     },
     {
       dir: 'dist',
@@ -20,13 +21,6 @@ export default {
       format: 'es',
       sourcemap: true,
     },
-    // {
-    //   dir: 'dist',
-    //   name: '',
-    //   entryFileNames: '[name].umd.js',
-    //   format: 'umd',
-    //   sourcemap: true,
-    // },
   ],
   context: 'this',
   plugins: [
