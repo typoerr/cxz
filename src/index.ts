@@ -11,7 +11,7 @@ export interface CXZOption {
 
 const hyph = (s: string) => s.replace(/[A-Z]/g, '-$&').toLowerCase()
 const wrap = (k: string, v: string) => k + '{' + v + '}'
-const pair = (k: string, v: string) => hyph(k) + ':' + v + ';'
+const pair = (k: string, v: string) => k + ':' + v + ';'
 
 const compile = (tree: CSSTree, sel = '&') => {
   let rules = ''
@@ -31,7 +31,7 @@ const compile = (tree: CSSTree, sel = '&') => {
         rules += compile(val, prop)
       }
     } else {
-      block += pair(prop, val)
+      block += pair(hyph(prop), val)
     }
   }
   if (block.length) {
@@ -59,18 +59,18 @@ export default function cxz(option: CXZOption = {}) {
     return { insert, reset, extract }
   })()
 
-  const updater = (reduce: (rule: string, name: string, tree: CSSTree) => string) => (tree: CSSTree) => {
+  const create = (cb: (rule: string, name: string) => string) => (tree: CSSTree) => {
     const rule = compile(tree)
     if (cache[rule]) {
       return cache[rule]
     }
     const name = (cache[rule] = prefix + '-' + hash(rule))
-    sheet.insert(reduce(rule, name, tree))
+    sheet.insert(cb(rule, name))
     return name
   }
 
-  const css = updater((rule, name) => wrap('@media', rule.replace(/&/gm, '.' + name)))
-  const keyframes = updater((rule, name) => wrap('@keyframes ' + name, rule))
+  const css = create((rule, name) => wrap('@media', rule.replace(/&/gm, '.' + name)))
+  const keyframes = create((rule, name) => wrap('@keyframes ' + name, rule))
 
   return { sheet, css, keyframes }
 }
