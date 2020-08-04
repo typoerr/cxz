@@ -69,7 +69,7 @@ export default function cxz(option: CXZOption = {}) {
     return name
   }
 
-  const css = create((rule, name) => wrap('@media', rule.replace(/&/gm, '.' + name)))
+  const css = create((rule, name) => rule.replace(/&/gm, '.' + name))
   const keyframes = create((rule, name) => wrap('@keyframes ' + name, rule))
 
   return { sheet, css, keyframes }

@@ -24,7 +24,7 @@ test('css', (t) => {
   const c = `.${name}{background-color:blue;}`
   const d = `@media(min-width:500px){${a + b + c}}`
 
-  t.is(sheet.extract(), `@media{${a + b + c + d}}`)
+  t.is(sheet.extract(), a + b + c + d)
 })
 
 test('keyframes', (t) => {
