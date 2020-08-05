@@ -22,6 +22,7 @@
     "url": "https://github.com/typoerr/cxz/issues"
   },
   "dependencies": {
+    "@emotion/hash": "^0.8.0",
     "csstype": "^3.0.2"
   },
   "devDependencies": {

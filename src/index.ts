@@ -1,4 +1,5 @@
 import * as CSS from 'csstype'
+import hash from '@emotion/hash'
 
 export interface CSSProps extends CSS.Properties, CSS.PropertiesHyphen {}
 
@@ -40,7 +41,6 @@ const compile = (tree: CSSTree, sel = '&') => {
 }
 
 export default function cxz(option: CXZOption = {}) {
-  let id = 0
   const prefix = option.prefix || 'cxz'
   let cache: Record<string, string> = {}
 
@@ -66,7 +66,7 @@ export default function cxz(option: CXZOption = {}) {
     if (cache[rule]) {
       return cache[rule]
     }
-    const name = (cache[rule] = prefix + '-' + id++)
+    const name = (cache[rule] = prefix + '-' + hash(rule))
     sheet.insert(cb(rule, name))
     return name
   }
