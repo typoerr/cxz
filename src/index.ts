@@ -1,80 +1,81 @@
 import * as CSS from 'csstype'
-import hash from '@emotion/hash'
+import ehash from '@emotion/hash'
 
 export interface CSSProps extends CSS.Properties, CSS.PropertiesHyphen {}
 
 export type CSSTree = CSSProps | Record<string, CSSProps> | Record<string, Record<string, CSSProps>>
 
-export interface CXZOption {
-  prefix?: string
-}
+const prefix = 'cxz'
+
+const marker = '/*' + prefix + '*/'
 
 const hyph = (s: string) => s.replace(/[A-Z]/g, '-$&').toLowerCase()
-const wrap = (k: string, v: string) => k + '{' + v + '}'
+
+const wrapper = (acc: string, k: string | undefined) => (k ? k + '{' + acc + '}' : acc)
+
+const wrap = (v: string, ...path: (string | undefined)[]) => path.reduce(wrapper, v)
+
 const pair = (k: string, v: string) => k + ':' + v + ';'
 
-const compile = (tree: CSSTree, sel = '&') => {
-  let rule = ''
-  let block = ''
+const hash = (rule: string) => prefix + '-' + ehash(rule)
+
+function stringify(obj: Record<string, any>, ret = ''): string {
+  for (const k in obj) {
+    const v = obj[k]
+    ret += typeof v === 'object' ? wrap(stringify(v), k) : pair(hyph(k), v)
+  }
+  return ret
+}
+
+let cache: Record<string, string> = {}
+
+export const sheet = (function (s: { data: string }) {
+  if (typeof document !== 'undefined') {
+    const style = document.head.appendChild(document.createElement('style'))
+    style.dataset['csx'] = prefix
+    s = style.appendChild(document.createTextNode(marker))
+  }
+  return {
+    insert: (rule: string) => (s.data += rule),
+    reset: () => (s.data = marker) && (cache = {}),
+    extract: () => s.data,
+  }
+})({ data: marker })
+
+export function patch(tree: CSSTree, sel = '&', at?: string) {
+  const cx = [hash(stringify(tree))]
+
   for (const k in tree) {
     const v: any = tree[k as keyof CSSTree]
-    if (v == null) {
-      continue
-    } else if (typeof v === 'object') {
-      if (block) {
-        rule += wrap(sel, block)
-        block = ''
-      }
-      if (k[0] === '@') {
-        rule += wrap(k, compile(v, sel))
-      } else {
-        rule += compile(v, k)
-      }
+    if (typeof v === 'object') {
+      cx.push(k[0] === '@' ? patch(v, sel, k) : patch(v, k, at))
     } else {
-      block += pair(hyph(k), v)
+      const rule = wrap(pair(hyph(k), v), sel, at)
+      if (cache[rule]) {
+        cx.push(cache[rule])
+      } else {
+        const name = (cache[rule] = hash(rule))
+        sheet.insert(rule.replace(/&/gm, '.' + name))
+        cx.push(name)
+      }
     }
   }
-  if (block) {
-    rule += wrap(sel, block)
-  }
-  return rule
+
+  return cx.join(' ')
 }
 
-export default function cxz(option: CXZOption = {}) {
-  const prefix = option.prefix || 'cxz'
-  let cache: Record<string, string> = {}
-
-  const sheet = (() => {
-    let _sheet = { data: '' }
-    if (typeof document !== 'undefined') {
-      const id = '_' + prefix
-      const style = document.getElementById(id) || document.head.appendChild(document.createElement('style'))
-      style.id = id
-      style.innerHTML = ' '
-      _sheet = style.firstChild as any
-    }
-
-    const insert = (rule: string) => _sheet.data.indexOf(rule) < 0 && (_sheet.data += rule)
-    const reset = () => (cache = {}) && (_sheet.data = ' ')
-    const extract = () => _sheet.data
-
-    return { insert, reset, extract }
-  })()
-
-  const gen = (cb: (rule: string, name: string) => string) => (tree: CSSTree) => {
-    const rule = compile(tree)
-    if (cache[rule]) {
-      return cache[rule]
-    }
-    const name = (cache[rule] = prefix + '-' + hash(rule))
-    sheet.insert(cb(rule, name))
-    return name
-  }
-
-  const css = gen((rule, name) => rule.replace(/&/gm, '.' + name))
-  const keyframes = gen((rule, name) => wrap('@keyframes ' + name, rule))
-
-  return { sheet, css, keyframes }
+export function css(tree: CSSTree) {
+  return patch(tree)
 }
 
-export const { css, keyframes, sheet } = cxz()
+export function keyframes(tree: CSSTree) {
+  const rule = stringify(tree)
+  if (cache[rule]) return cache[rule]
+  const name = (cache[rule] = hash(rule))
+  sheet.insert(wrap(rule, '@keyframes ' + name))
+  return name
+}
+
+export function sel(clazz: string) {
+  return clazz.length ? '.' + clazz.split(' ')[0] : ''
+}

@@ -1,9 +1,11 @@
 import test from 'ava'
-import cxz from '../src/index'
+import { css, keyframes, sheet } from '../src/index'
 
-test('css', (t) => {
-  const { css, sheet } = cxz()
+test.beforeEach(() => {
+  sheet.reset()
+})
 
+test.serial('css', (t) => {
   const name = css({
     color: 'red',
     '&:hover': {
@@ -19,16 +21,24 @@ test('css', (t) => {
     },
   })
 
-  const a = `.${name}{color:red;}`
-  const b = `.${name}:hover{color:yellow;}`
-  const c = `.${name}{background-color:blue;}`
-  const d = `@media(min-width:500px){${a + b + c}}`
+  const rules = [
+    '/*cxz*/',
+    '.cxz-bkhmwp{color:red;}',
+    '.cxz-zbx9te:hover{color:yellow;}',
+    '.cxz-1t2ai63{background-color:blue;}',
+    '@media(min-width:500px){.cxz-ysyzqw{color:red;}}',
+    '@media(min-width:500px){.cxz-1vki4xt:hover{color:yellow;}}',
+    '@media(min-width:500px){.cxz-19wsgt3{background-color:blue;}}',
+  ]
 
-  t.is(sheet.extract(), a + b + c + d)
+  t.is(
+    name,
+    'cxz-1l8nxex cxz-bkhmwp cxz-fsfbn2 cxz-zbx9te cxz-1t2ai63 cxz-15jyl5d cxz-ysyzqw cxz-fsfbn2 cxz-1vki4xt cxz-19wsgt3',
+  )
+  t.is(sheet.extract(), rules.join(''))
 })
 
-test('keyframes', (t) => {
-  const { keyframes, sheet } = cxz()
+test.serial('keyframes', (t) => {
   const name = keyframes({
     from: {
       opacity: 0,
@@ -38,5 +48,5 @@ test('keyframes', (t) => {
     },
   })
 
-  t.is(sheet.extract(), `@keyframes ${name}{from{opacity:0;}to{opacity:1;}}`)
+  t.is(sheet.extract(), `/*cxz*/@keyframes ${name}{from{opacity:0;}to{opacity:1;}}`)
 })
