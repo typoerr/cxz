@@ -32,7 +32,7 @@ let cache: Record<string, string> = {}
 export const sheet = (function (s: { data: string }) {
   if (typeof document !== 'undefined') {
     const style = document.head.appendChild(document.createElement('style'))
-    style.dataset['csx'] = prefix
+    style.dataset[prefix] = prefix
     s = style.appendChild(document.createTextNode(marker))
   }
   return {
