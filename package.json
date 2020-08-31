@@ -23,29 +23,29 @@
   },
   "dependencies": {
     "@emotion/hash": "^0.8.0",
-    "csstype": "^3.0.2"
+    "csstype": "^3.0.3"
   },
   "devDependencies": {
     "@rollup/plugin-typescript": "^5.0.2",
-    "@types/node": "^14.0.27",
-    "@types/sinon": "^9.0.4",
+    "@types/node": "^14.6.2",
+    "@types/sinon": "^9.0.5",
     "@typoerr/eslint-config": "^0.0.34",
-    "ava": "^3.11.1",
-    "eslint": "^7.6.0",
+    "ava": "^3.12.1",
+    "eslint": "^7.7.0",
     "npm-run-all": "^4.1.5",
     "parcel-bundler": "^1.12.4",
-    "preact": "^10.4.6",
-    "prettier": "^2.0.5",
+    "preact": "^10.4.8",
+    "prettier": "^2.1.1",
     "rimraf": "^3.0.2",
-    "rollup": "^2.23.0",
+    "rollup": "^2.26.8",
     "rollup-plugin-auto-external": "^2.0.0",
-    "sinon": "^9.0.2",
-    "ts-node": "^8.10.2",
+    "sinon": "^9.0.3",
+    "ts-node": "^9.0.0",
     "tsconfig-paths": "^3.9.0",
-    "typescript": "^3.9.7"
+    "typescript": "^4.0.2"
   },
   "scripts": {
-    "example": "parcel example/index.html --port 3000 --out-dir example/dist --cache-dir example/.cache --open",
+    "example": "parcel example/index.html --port 3000 --out-dir example/dist --cache-dir example/.cache",
     "compile": "rollup -c",
     "clean": "rimraf dist",
     "lint": "eslint src/**/*.ts test/**/*.ts",
