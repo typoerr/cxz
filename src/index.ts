@@ -77,5 +77,5 @@ export function keyframes(tree: CSSTree) {
 }
 
 export function sel(clazz: string) {
-  return clazz.length ? '.' + clazz.split(' ')[0] : ''
+  return '.' + clazz.split(' ')[0]
 }
