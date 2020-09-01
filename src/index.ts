@@ -43,7 +43,7 @@ export const sheet = (function (s: { data: string }) {
 })({ data: marker })
 
 export function patch(tree: CSSTree, sel = '&', at?: string) {
-  const cx = [hash(stringify(tree))]
+  const cx: string[] = []
 
   for (const k in tree) {
     const v: any = tree[k as keyof CSSTree]
@@ -74,8 +74,4 @@ export function keyframes(tree: CSSTree) {
   const name = (cache[rule] = hash(rule))
   sheet.insert(wrap(rule, '@keyframes ' + name))
   return name
-}
-
-export function sel(clazz: string) {
-  return '.' + clazz.split(' ')[0]
 }

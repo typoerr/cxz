@@ -8,15 +8,11 @@ test.beforeEach(() => {
 test.serial('css', (t) => {
   const name = css({
     color: 'red',
-    '&:hover': {
-      color: 'yellow',
-    },
+    '&:hover': { color: 'yellow' },
     backgroundColor: 'blue',
     '@media(min-width:500px)': {
       color: 'red',
-      '&:hover': {
-        color: 'yellow',
-      },
+      '&:hover': { color: 'yellow' },
       backgroundColor: 'blue',
     },
   })
@@ -31,10 +27,7 @@ test.serial('css', (t) => {
     '@media(min-width:500px){.cxz-19wsgt3{background-color:blue;}}',
   ]
 
-  t.is(
-    name,
-    'cxz-1l8nxex cxz-bkhmwp cxz-fsfbn2 cxz-zbx9te cxz-1t2ai63 cxz-15jyl5d cxz-ysyzqw cxz-fsfbn2 cxz-1vki4xt cxz-19wsgt3',
-  )
+  t.is(name, 'cxz-bkhmwp cxz-zbx9te cxz-1t2ai63 cxz-ysyzqw cxz-1vki4xt cxz-19wsgt3')
   t.is(sheet.extract(), rules.join(''))
 })
 
