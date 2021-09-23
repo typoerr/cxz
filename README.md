@@ -13,7 +13,6 @@ npm i @typoerr/cxz
 
 https://www.npmjs.com/package/@typoerr/cxz
 
-
 ## Example
 
 See `example/index.ts`.

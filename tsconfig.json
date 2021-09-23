@@ -1,40 +1,39 @@
+/* Visit https://aka.ms/tsconfig.json to read more about this file */
 {
   "compilerOptions": {
-    "module": "CommonJS",
-    "moduleResolution": "node",
+    /* Language and Environment */
     "target": "ES2015",
-    "lib": [
-      "ES2019",
-      "DOM"
-    ],
-    "baseUrl": ".",
-    "paths": {
-      "@/*": [
-        "./src/*"
-      ]
-    },
+    "lib": ["ESNext", "DOM"],
+
+    /* Modules */
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "baseUrl": "./",
+    "paths": { "@/*": ["./src/*"] },
+
+    /* Emit */
     "declaration": true,
-    "outDir": "dist",
     "sourceMap": true,
-    "esModuleInterop": true,
-    "strict": true,
-    "noFallthroughCasesInSwitch": true,
-    "noImplicitReturns": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
+    "outDir": "./dist",
     "noEmitOnError": true,
+
+    /* Interop Constraints */
+    "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
-    "skipDefaultLibCheck": true,
-    "pretty": true,
-    "types": [
-      "node"
-    ]
+
+    /* Type Checking */
+    "strict": true,
+    "exactOptionalPropertyTypes": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedIndexedAccess": true,
+    "noImplicitOverride": true,
+    "noPropertyAccessFromIndexSignature": true,
+
+    /* Completeness */
+    "skipLibCheck": true
   },
-  "include": [
-    "src/**/*.ts",
-    "test/**/*.ts"
-  ],
-  "exclude": [
-    "node_modules"
-  ]
+
+  "include": ["src/**/*.ts", "test/**/*.ts"]
 }

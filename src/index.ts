@@ -1,5 +1,5 @@
-import * as CSS from 'csstype'
 import ehash from '@emotion/hash'
+import * as CSS from 'csstype'
 
 export interface CSSProps extends CSS.Properties, CSS.PropertiesHyphen {}
 
@@ -52,7 +52,7 @@ export function patch(tree: CSSTree, sel = '&', at?: string) {
     } else {
       const rule = wrap(pair(hyph(k), v), sel, at)
       if (cache[rule]) {
-        cx.push(cache[rule])
+        cx.push(cache[rule]!)
       } else {
         const name = (cache[rule] = hash(rule))
         sheet.insert(rule.replace(/&/gm, '.' + name))
